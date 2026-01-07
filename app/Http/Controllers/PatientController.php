@@ -28,7 +28,14 @@ class PatientController extends Controller
             'source' => 'required|in:Inpatient,Outpatient,Physical Exam'
         ]);
 
-        Patient::create($request->all());
+        Patient::create([
+            'name' => $request['name'],
+            'age' => $request['age'],
+            'gender' => $request['gender'],
+            'pacemaker' => $request['pacemaker'],
+            'source' => $request['source'],
+            'isInWorklist' => false,
+        ]);
         return redirect()->route('patients.index')->with('success', 'Patient created successfully');
     }
 
