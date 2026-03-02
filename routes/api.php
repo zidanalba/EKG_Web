@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\HeartRateUpdated;
+use App\Http\Controllers\Api\WorklistController;
 use App\Models\EkgResult;
 use App\Models\Patient;
 use Illuminate\Http\Request;
@@ -27,13 +28,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/worklist', [WorklistController::class, 'query']);
 
 Route::post('/ecg-result', function (Request $request) {
-    if (!$request->hasFile('pdf')) {
+    if (!$request->hasFile('file')) {
         return response()->json(['status' => 'error', 'message' => 'No file uploaded'], 400);
     }
 
-    $pdf = $request->file('pdf');
+    $pdf = $request->file('file');
 
     if (!$pdf->isValid() || $pdf->getClientOriginalExtension() !== 'pdf') {
         return response()->json(['status' => 'error', 'message' => 'Invalid file'], 400);
@@ -53,6 +55,30 @@ Route::post('/ecg-result', function (Request $request) {
     ]);
 
     return response()->json(['status' => 'ok', 'message' => 'Result stored', 'filename' => $filename]);
+});
+
+Route::post('areaList', function (Request $request) {
+    return response()->json([
+        "result" => "",
+        "errorCode" => "",
+        "errorText" => "",
+        "data" => [
+            [
+                "INPA_AREA_ID" =>  "1009",  
+                "INPA_AREA_NAME" =>  "Pediatric  Ward",
+                "INPA_AREA_NAME_EN" =>  "Pediatric  Ward",
+                "INPA_AREA_ADDRESS" =>  "2nd Floor of Building 2",
+                "ADD_STATE" =>  2
+            ],
+            [
+                "INPA_AREA_ID" =>  "1010",  
+                "INPA_AREA_NAME" =>  "Pediatric  Ward",
+                "INPA_AREA_NAME_EN" =>  "Pediatric  Ward",
+                "INPA_AREA_ADDRESS" =>  "3rd Floor of Building 2",
+                "ADD_STATE" =>  2
+            ]  
+        ]
+    ]);
 });
 
 Route::post('/iotdataupload', function (Request $request) {
